@@ -7,7 +7,7 @@ int main(){
     unsigned char random_string1[MAX], random_string2[MAX];
     unsigned char output[MAX];
 
-    // RAND_load_file("/dev/random", 64); optional on UNIX enviroment
+    RAND_load_file("/dev/random", 64); 
     RAND_bytes(random_string1, MAX);
     RAND_bytes(random_string2, MAX);
 

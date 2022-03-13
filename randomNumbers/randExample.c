@@ -6,7 +6,7 @@
 int main(){
     unsigned char random_string[MAX];
 
-    // RAND_load_file("/dev/random", 64); optional on UNIX enviroment
+    RAND_load_file("/dev/random", 64); 
     RAND_bytes(random_string, MAX);
 
     printf("Sequence generated: ");
