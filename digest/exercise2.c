@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <openssl/err.h>
+#include <openssl/evp.h>
+
+// first parameter is the name of the file to hash
+
+#define MAXBUF 1024
+
+void handle_errors(){
+    ERR_print_errors_fp(stderr);
+    abort();
+}
+
+int main(int argc, char **argv){
+
+    if(argc != 3){
+        fprintf(stderr, "Invalid parameter num. Usage: %s string_to_hash\n", argv[0]);
+        exit(-1);
+    }
+    
+    FILE *f_in, *f_in2;
+    if((f_in = fopen(argv[1], "r")) == NULL || (f_in2 = fopen(argv[2], "r")) == NULL){
+        fprintf(stderr, "Couldn't open the input file, try again\n", argv[0]);
+        exit(1);
+    }
+    
+    EVP_MD_CTX *md;
+
+    ERR_load_crypto_strings();
+    OpenSSL_add_all_algorithms();
+
+    md = EVP_MD_CTX_new();
+    if(!EVP_DigestInit(md, EVP_sha256()))
+        handle_errors();
+
+    unsigned char buffer[MAXBUF], buffer2[MAXBUF], buffer3[MAXBUF*3];
+    int n_read, n_read2;
+
+    while((n_read = fread(buffer, 1, MAXBUF, f_in)) > 0 && (n_read2 = fread(buffer2, 1, MAXBUF, f_in2)) > 0){
+        sprintf(buffer3, "%s%s\n", buffer, buffer2);
+        printf("%s", buffer3);
+        if(!EVP_DigestUpdate(md, buffer3, strlen(buffer3)))
+            handle_errors();
+    }
+   
+
+
+//    EVP_DigestUpdate(md, argv[1], strlen(argv[1]));
+
+    unsigned char md_value[EVP_MD_size(EVP_sha256())];
+    int md_len;
+
+    if(!EVP_DigestFinal(md, md_value, &md_len))
+        handle_errors();
+
+    EVP_MD_CTX_free(md);
+
+    CRYPTO_cleanup_all_ex_data();
+    ERR_free_strings();
+
+    printf("The digest is: ");
+    for(int i = 0; i < md_len; i++){
+        printf("%02x", md_value[i]);
+    }
+    printf("\n");
+
+
+    return 0;
+}

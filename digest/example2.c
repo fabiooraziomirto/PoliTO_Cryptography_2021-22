@@ -2,17 +2,22 @@
 #include <string.h>
 #include <openssl/evp.h>
 
-int main(){
-    char message[] = "This is the message to hash!!!";
+int main(int argc, char **argv){
+
+    if(argc != 2){
+        fprintf(stderr, "Invalid parameter num. Usage: %s string_to_hash\n", argv[0]);
+        exit(-1);
+    }
+    
 
     EVP_MD_CTX *md;
 
     md = EVP_MD_CTX_new();
     EVP_DigestInit(md, EVP_sha1());
 
-    EVP_DigestUpdate(md, message, strlen(message));
+    EVP_DigestUpdate(md, argv[1], strlen(argv[1]));
 
-    unsigned char md_value[20];
+    unsigned char md_value[EVP_MD_size(EVP_sha1())];
     int md_len;
 
     EVP_DigestFinal(md, md_value, &md_len);
