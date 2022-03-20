@@ -1,3 +1,4 @@
-randomNumbers/rand1.exe
-randomNumbers/rand2.exe
+randomNumbers/*.exe
 digest/*.exe
+HMAC/*.exe
+encryption/*.exe
