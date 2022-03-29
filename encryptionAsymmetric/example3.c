@@ -71,6 +71,7 @@ int main(){
 
     fclose(out);
 
+
     printf("File saved!\n");
 
     printf("I'm reading the encrypted file...\n");
